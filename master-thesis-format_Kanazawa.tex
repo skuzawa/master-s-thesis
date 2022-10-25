@@ -1,0 +1,186 @@
+\documentclass[leqno,11pt]{jarticle} 
+\makeatletter
+\RequirePackage{marginnote,xcolor}
+\setlength{\marginparsep}{5pt}
+\let\temp@label\label
+\def\label#1{\marginnote{\hbox to 0pt{\scriptsize \textcolor{black!60}{#1}\hss}}\temp@label{#1}\ignorespaces}
+\makeatother
+\usepackage[mathscr]{eucal}
+\usepackage{mathrsfs}
+\usepackage{amscd}
+\usepackage{amsfonts}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{latexsym}
+\usepackage{bm}
+\usepackage[dvips]{graphics}
+\usepackage{color,graphicx}
+\numberwithin{equation}{section}
+
+\def\tr#1{\mathord{\mathopen{{\vphantom{#1}}^t}#1}} 
+\def\C{{\mathbf{C}}}%   \C == \mathbf{C}
+\def\R{{\mathbf{R}}}%   \R == \mathbf{R}
+\def\Q{{\mathbf{Q}}}%   \Q == \mathbf{Q}
+\def\H{{\mathbf{H}}}%   \H == \mathbf{H}
+\def\Z{{\mathbf{Z}}}%   \Z == \mathbf{Z}
+\def\N{{\mathbf{N}}}%   \N == \mathbf{N}
+\def\A{{\mathcal{A}}}%  \A == \mathcal{A}
+\def\D{{\mathbf{D}}}%  \D == \mathbf{D}
+\def\L{{\mathbf{L}}}%  \L == \mathbf{L}
+\def\W{{\mathcal{W}}}% \W == \mathcal{W}
+\def\Pa{{\mathbf{P}}}%  \Pi == \mathbf{P}
+\def\Si{{\mathbf{S}}}%   \Si == \mathbf{S}
+
+\theoremstyle{definition} %
+\newtheorem{theorem}{\bf 定理}[section] % 
+\newtheorem{lemma}[theorem]{\bf 補題}
+\newtheorem{corollary}[theorem]{\bf 系}
+\newtheorem{proposition}[theorem]{\bf 命題}
+\newtheorem{fact}[theorem]{\bf 事実}
+\newtheorem{conjecture}[theorem]{\bf 予想}
+%
+\theoremstyle{definition} % 
+\newtheorem{definition}[theorem]{\bf 定義}
+\newtheorem{remark}[theorem]{\bf 注意}
+\newtheorem{example}[theorem]{\bf 例}
+\newtheorem{notation}[theorem]{\bf 記号}
+\newtheorem{assertion}[theorem]{\bf 要請}
+
+\renewcommand{\proofname}{\bf 証明.}
+
+
+
+\pagestyle{plain} 
+
+\title{Master Thesis \\ \bigskip 
+修士論文 \\ \bigskip 
+{\bf  時間遅れ微分方程式を用いたプレス機制御法の開発 }\\ \bigskip 
+} 
+\author{九澤俊介}
+\date{金沢大学大学院自然科学研究科 \\
+Graduate School of Natural Science and Technology, \\
+Kanazawa University}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\setcounter{page}{-1}
+
+
+\thispagestyle{empty}
+
+\mbox{}\newpage 
+
+\tableofcontents
+
+\newpage 
+\section{はじめに}
+歪み取り機とは,自動車の動力を車輪に伝えるために用いられるシャフトの
+\subsection{研究の目的と方法} 
+\subsection{目的}
+\subsubsection{東和精機株式会社の課題解決}
+\subsection{方法}
+\subsubsection{時間遅れ微分方程式をもとに数値計算を行う}
+\subsection{時間遅れ微分方程式について}
+\subsubsection{一般的な時間遅れ微分方程式について}
+
+\section{$\beta$コントロールによる分析}
+\subsection{微分方程式について}
+$\ell:$目標のプレスする距離,$\tau:$時間遅れ,$\beta:$指数,
+$v_{\max}:$プレス速度の最大値,$X(t):$
+時刻$t$で得られる最新の位置情報$(=x(t-\tau))$に対し,
+\begin{equation}
+    G:=1-0.58\times\beta^{-0.79},\ell_1:=\frac{\tau v_{\max}}{G},v_0:=\min\left\{\displaystyle\frac{\ell G}{\tau},v_{\max}\right\}
+\end{equation}
+とおく.次のようにプレス速度$V(X)$を設定する.
+\begin{equation}\label{eq:betamodel}
+    V(X)=v_0\left(\displaystyle\frac{\min\{\ell_1,\ell-X\}}{\min\{\ell_1,\ell\}}\right)^\beta.
+\end{equation}
+\subsubsection{微分方程式}
+\eqref{eq:betamodel}は次のように書き換えられる.
+\begin{equation}\label{betafomula}\begin{cases}
+    \displaystyle\frac{dx}{dt}(t)=v_0\left(\frac{\ell-x(t-\tau)}{\ell}\right)^\beta &(t>\tau),\\
+    x(t)=v_0 t &(0\le t \le \tau).
+\end{cases}\end{equation}
+\subsubsection{無次元化}
+次のような記号を用いると
+\begin{equation}
+    s:=\frac{t}{\tau},w(s):=\frac{x(\tau s)}{\ell},u_0:=\frac{\tau v_0}{\ell},
+\end{equation}
+\eqref{betafomula}は次のように書ける.
+\begin{equation}\label{betafomula}\begin{cases}
+    \displaystyle\frac{dw}{ds}(s)=u_0(1-w(s-1))^\beta &(s>1),\\
+    w(s)=u_0 s &(0\le s \le 1).
+\end{cases}\end{equation}
+\subsection{数値計算}
+\subsubsection{$\beta$ によるオーバーシュートの比較}
+
+\section{線形コントロールによる分析}
+\subsection{微分方程式について}
+従来の$\beta$コントロールでは以下のような課題があった。
+\begin{itemize}
+    \item プレス機をシャフトに衝突してから制御し始めていたため,押込量が小さいときオーバーシュートが大きくなる.
+    \item 初速を$v_0(<v_{\max})$にすると,時間がかかる.
+    \item 停止直前の速度が小さすぎる.
+    \item 制御速度が押込量に依存しているため,オーバーシュートが安定しない.
+\end{itemize}
+このような課題を受け,以下のような改善点を基に線形モデルを構築した.
+\begin{itemize}
+    \item $\beta=1$として線形コントロール. 
+    \item 初速は常に$v_{\max}$とする.
+    \item 押込量が小さいときはプレス機がシャフトに接触する前から制御を始める.
+    \item 制御速度が押込量に依存しているため,オーバーシュートが安定しない.
+\end{itemize}
+$\ell:$目標のプレスする距離,$\tau:$時間遅れ,$\alpha,\beta:$パラメータ,
+$v_{\max}:$プレス速度の最大値,$v_{\min}:$プレス速度の最小値,$X(t):$
+時刻$t$で得られる最新の位置情報$(=x(t-\tau))$に対し,
+\begin{equation}\label{eq:linermodel}
+    V(X)=v_{\min}+a(\ell_0-X)
+\end{equation}
+と$V(X)$を設定する.\\ただし$\Delta\ell :=\delta v_{\min}\tau,
+\ell_0:=\ell-\Delta\ell,a:=\frac{\alpha}{\tau}.$
+\subsubsection{微分方程式}
+\eqref{eq:linermodel}は次のように書き換えられる.
+\begin{equation}\label{eq:liner}\begin{cases}
+    \displaystyle\frac{dx}{dt}(t)=v_{\min}+a(\ell_0-x(t-\tau)) &(t>\tau),\\
+    x(t)=v_{\max}t+x_\ast &(0\le t \le \tau)
+\end{cases}\end{equation}
+\subsubsection{正規化}
+次のような記号を用いると
+\begin{equation}
+    s:=\displaystyle\frac{t}{\tau},d:=\frac{\ell}{v_{\min}\tau},
+    y(s):=\displaystyle\frac{x(\tau s)}{v_{min}\tau},
+    u_{\max}:=\displaystyle\frac{v_{\max}}{v_{\min}}
+\end{equation}
+\eqref{eq:liner}は次のように書ける.
+\begin{equation}\begin{cases}
+    \displaystyle\frac{dy}{ds}(s)=1+\alpha(d_0-y(s-1)) &(s>1),\\
+    y(s)=u_{\max}s+y_\ast &(0\le s \le 1)\label{eq:liner}
+\end{cases}\end{equation}
+\subsubsection{従来の手法との相違点}
+\subsection{数値計算}
+\subsubsection{$\alpha$,$\beta$によるオーバーシュートの比較}
+\section{終章}
+\subsection{結論}
+\subsection{残された課題}
+文献は\cite{Si}で表せます．
+
+\begin{equation}\label{eq1}
+x^{3}-5=y^{2}. 
+\end{equation}
+\begin{proof}
+式(\ref{eq1})には特に意味はありません．
+\end{proof}
+
+\subsection{見本２}
+
+\vspace{1cm}
+\begin{thebibliography}{9}
+\bibitem{Si} A. Simoni\u{c}, The Ahlfors lemma and Picard's theorems, 
+Rose-Hulman Undergrad. Math. J. {\bf 16} (2015), no. 2, 113--136. 
+\bibitem{KF} 岸正倫，藤本坦孝，複素関数論，学術図書出版社 (1980)．
+\bibitem{Fu} 藤本坦孝，複素解析，岩波書店 (2006)．
+
+
+\end{thebibliography}
+
+\end{document}
