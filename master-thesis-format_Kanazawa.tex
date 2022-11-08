@@ -1,4 +1,5 @@
-\documentclass[leqno,11pt]{jarticle} 
+%%\documentclass[leqno,11pt]{jarticle}
+\documentclass [dvipdfmx] {jsarticle}
 \makeatletter
 \RequirePackage{marginnote,xcolor}
 \setlength{\marginparsep}{5pt}
@@ -14,6 +15,7 @@
 \usepackage{bm}
 \usepackage[dvips]{graphics}
 \usepackage{color,graphicx}
+\usepackage{pdfpages}
 \numberwithin{equation}{section}
 
 \def\tr#1{\mathord{\mathopen{{\vphantom{#1}}^t}#1}} 
@@ -53,7 +55,7 @@
 
 \title{Master Thesis \\ \bigskip 
 修士論文 \\ \bigskip 
-{\bf  時間遅れ微分方程式を用いたプレス機制御法の開発 }\\ \bigskip 
+{\bf  遅延微分方程式を用いたプレス機制御法の開発 }\\ \bigskip 
 } 
 \author{九澤俊介}
 \date{金沢大学大学院自然科学研究科 \\
@@ -74,20 +76,40 @@ Kanazawa University}
 
 \newpage 
 \section{はじめに}
-歪み取り機とは,自動車の動力を車輪に伝えるために用いられるシャフトの
+
+遅延微分方程式とは,現時点の時間導関数が解だけでなく，前の時間における導関数にも依存する可能性のあるような微分方程式である．
+制御システムにおいてフィードバックにかかる時間遅れも指摘されており，様々な数理モデルが数多く研究されている.
+身近な例としては，シャワーの温度調節が上げられる．熱いと感じて温度を下げるがぬるすぎて再び温度を上げるなどのような
+ことが挙げられる.
+
 \subsection{研究の目的と方法} 
 \subsection{目的}
-\subsubsection{東和精機株式会社の課題解決}
-\subsection{方法}
-\subsubsection{時間遅れ微分方程式をもとに数値計算を行う}
-\subsection{時間遅れ微分方程式について}
-\subsubsection{一般的な時間遅れ微分方程式について}
-
+本研究では遅延微分方程式で数理モデルを構築し,株式会社東和精機のプレス制御法の開発を行う.
+株式会社東和精機では,車のタイヤの連結部分であるシャフトをプレスすることによりその形状を成型している.
+その際に,プレス機の制御システムにおいてフィードバックに時間がかかることで時間遅れが生じる.
+また時間遅れが生じることで,プレスしたい量と実際にプレスした量が一致しない問題があった.
+そこでこのプレス制御に対して時間遅れ微分方程式で数理モデルを構築することで,プレスしたい量を押し込める
+方法を開発するために本研究に至った.
+(プレス機のイメージ図)
+\subsection{本論文の構成}
+本論文は次のように構成される.第2節では東和精機の問題の具体的な概要、また本論文で扱う記号などについて述べる.
+第3節では$\beta$コントロールによるプレス制御モデルと
+そのモデルによる数値シミュレーションの結果を表す.
+第4節では線形コントロールによるプレス制御モデルとそのモデルによる数値シミュレーション
+結果を表す.第5節では第4節のモデルで得られた結果から見える今後の課題や展望などについて述べる.
+\section{概要}
+金属棒の歪んでいる方向と反対側へ指定の位置までプレスすることに
+よって，真っ直ぐの状態に塑性変形させ金属棒の歪みをとりたいのだが，
+現実にはその指定位置を超えてプレスしてしまう現象 (オーバーシュート) が起こる.
+オーバーシュートが生じる原因として，計測結果が歪取機に反映されるまでの遅れが挙げられる.
+時間遅れは東和精機に計測していただいたデータを用いる.
+\subsection{記号について}
+シャフトをプレス機で押し込みたい量を$\ell$,制御システムにおいて発生する時間遅れを$\tau$,プレス速度の最大値を
+$v_{\max}$,最小速度を$v_{\min}$,時刻$t$において得られる最新の位置情報を$X(t)(=x(t-\tau))$とする.
+%%\includepdf[noautoscale=true, scale=0.9, pagecommand={}]{修論図_2.pdf}
 \section{$\beta$コントロールによる分析}
 \subsection{微分方程式について}
-$\ell:$目標のプレスする距離,$\tau:$時間遅れ,$\beta:$指数,
-$v_{\max}:$プレス速度の最大値,$X(t):$
-時刻$t$で得られる最新の位置情報$(=x(t-\tau))$に対し,
+$\beta:$指数,$v_{\max}:$に対し,
 \begin{equation}
     G:=1-0.58\times\beta^{-0.79},\ell_1:=\frac{\tau v_{\max}}{G},v_0:=\min\left\{\displaystyle\frac{\ell G}{\tau},v_{\max}\right\}
 \end{equation}
@@ -96,7 +118,7 @@ $v_{\max}:$プレス速度の最大値,$X(t):$
     V(X)=v_0\left(\displaystyle\frac{\min\{\ell_1,\ell-X\}}{\min\{\ell_1,\ell\}}\right)^\beta.
 \end{equation}
 \subsubsection{微分方程式}
-\eqref{eq:betamodel}は次のように書き換えられる.
+$t\in\mathbb{R},x(t):\mathbb{R}\rightarrow\mathbb{R}$と定数$v_0,\ell,\tau,\beta$に対して\eqref{eq:betamodel}は次のように書き換えられる.
 \begin{equation}\label{betafomula}\begin{cases}
     \displaystyle\frac{dx}{dt}(t)=v_0\left(\frac{\ell-x(t-\tau)}{\ell}\right)^\beta &(t>\tau),\\
     x(t)=v_0 t &(0\le t \le \tau).
