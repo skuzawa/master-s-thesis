@@ -1,5 +1,7 @@
-%%\documentclass[leqno,11pt]{jarticle}
+%\documentclass[leqno,11pt]{jarticle}
 \documentclass [dvipdfmx] {jsarticle}
+%\documentclass[a5j]{jarticle}
+
 \makeatletter
 \RequirePackage{marginnote,xcolor}
 \setlength{\marginparsep}{5pt}
@@ -73,8 +75,7 @@ Kanazawa University}
 \mbox{}\newpage 
 
 \tableofcontents
-
-\newpage 
+\clearpage
 \section{はじめに}
 
 遅延微分方程式とは,現時点の時間導関数が解だけでなく，前の時間における導関数にも依存する可能性のあるような微分方程式である．
@@ -85,10 +86,10 @@ Kanazawa University}
 \subsection{研究の目的と方法} 
 \subsection{目的}
 本研究では遅延微分方程式で数理モデルを構築し,株式会社東和精機のプレス制御法の開発を行う.
-株式会社東和精機では,車のタイヤの連結部分であるシャフトをプレスすることによりその形状を成型している.
+東和精機では,車のタイヤの連結部分であるシャフトをプレスすることによりその形状を成型している.
 その際に,プレス機の制御システムにおいてフィードバックに時間がかかることで時間遅れが生じる.
-また時間遅れが生じることで,プレスしたい量と実際にプレスした量が一致しない問題があった.
-そこでこのプレス制御に対して時間遅れ微分方程式で数理モデルを構築することで,プレスしたい量を押し込める
+そして時間遅れが生じることで,目的のプレスしたい量と実際にプレスした量が一致しない問題があった.
+そこでこのプレス制御に対して時間遅れ微分方程式で数理モデルを構築することで,目的のプレスしたい量と実際にプレスした量が一致させる
 方法を開発するために本研究に至った.
 (プレス機のイメージ図)
 \subsection{本論文の構成}
@@ -108,17 +109,18 @@ Kanazawa University}
 $v_{\max}$,最小速度を$v_{\min}$,時刻$t$において得られる最新の位置情報を$X(t)(=x(t-\tau))$とする.
 %%\includepdf[noautoscale=true, scale=0.9, pagecommand={}]{修論図_2.pdf}
 \section{$\beta$コントロールによる分析}
+($\beta$コントロール制御に至った過程)
 \subsection{微分方程式について}
-$\beta:$指数,$v_{\max}:$に対し,
+指数$\beta$に対し,
 \begin{equation}
-    G:=1-0.58\times\beta^{-0.79},\ell_1:=\frac{\tau v_{\max}}{G},v_0:=\min\left\{\displaystyle\frac{\ell G}{\tau},v_{\max}\right\}
+    G:=1-0.58\times\beta^{-0.79},\ \ell_1:=\frac{\tau v_{\max}}{G},\ v_0:=\min\left\{\displaystyle\frac{\ell G}{\tau},v_{\max}\right\}
 \end{equation}
 とおく.次のようにプレス速度$V(X)$を設定する.
 \begin{equation}\label{eq:betamodel}
     V(X)=v_0\left(\displaystyle\frac{\min\{\ell_1,\ell-X\}}{\min\{\ell_1,\ell\}}\right)^\beta.
 \end{equation}
 \subsubsection{微分方程式}
-$t\in\mathbb{R},x(t):\mathbb{R}\rightarrow\mathbb{R}$と定数$v_0,\ell,\tau,\beta$に対して\eqref{eq:betamodel}は次のように書き換えられる.
+$t\in\mathbb{R},x(t):\mathbb{R}\rightarrow\mathbb{R}$と定数$\ell,\tau$,上で定めた$\beta,v_0$に対して\eqref{eq:betamodel}は次のように書き換えられる.
 \begin{equation}\label{betafomula}\begin{cases}
     \displaystyle\frac{dx}{dt}(t)=v_0\left(\frac{\ell-x(t-\tau)}{\ell}\right)^\beta &(t>\tau),\\
     x(t)=v_0 t &(0\le t \le \tau).
@@ -126,7 +128,7 @@ $t\in\mathbb{R},x(t):\mathbb{R}\rightarrow\mathbb{R}$と定数$v_0,\ell,\tau,\be
 \subsubsection{無次元化}
 次のような記号を用いると
 \begin{equation}
-    s:=\frac{t}{\tau},w(s):=\frac{x(\tau s)}{\ell},u_0:=\frac{\tau v_0}{\ell},
+    s:=\frac{t}{\tau},\ w(s):=\frac{x(\tau s)}{\ell},\ u_0:=\frac{\tau v_0}{\ell},
 \end{equation}
 \eqref{betafomula}は次のように書ける.
 \begin{equation}\label{betafomula}\begin{cases}
@@ -134,10 +136,11 @@ $t\in\mathbb{R},x(t):\mathbb{R}\rightarrow\mathbb{R}$と定数$v_0,\ell,\tau,\be
     w(s)=u_0 s &(0\le s \le 1).
 \end{cases}\end{equation}
 \subsection{数値計算}
-\subsubsection{$\beta$ によるオーバーシュートの比較}
-
+\subsubsection{離散化}
+(離散化)
+\subsubsection{数値計算結果}
+（$\beta$を固定して$u_0$をパラメータとした結果）
 \section{線形コントロールによる分析}
-\subsection{微分方程式について}
 従来の$\beta$コントロールでは以下のような課題があった。
 \begin{itemize}
     \item プレス機をシャフトに衝突してから制御し始めていたため,押込量が小さいときオーバーシュートが大きくなる.
@@ -152,14 +155,18 @@ $t\in\mathbb{R},x(t):\mathbb{R}\rightarrow\mathbb{R}$と定数$v_0,\ell,\tau,\be
     \item 押込量が小さいときはプレス機がシャフトに接触する前から制御を始める.
     \item 制御速度が押込量に依存しているため,オーバーシュートが安定しない.
 \end{itemize}
-$\ell:$目標のプレスする距離,$\tau:$時間遅れ,$\alpha,\beta:$パラメータ,
-$v_{\max}:$プレス速度の最大値,$v_{\min}:$プレス速度の最小値,$X(t):$
+\subsection{微分方程式について}
+$\ell:$目標のプレスする距離,\ $\tau:$時間遅れ,\ $\alpha,\delta:$パラメータ,\ 
+$v_{\max}:$プレス速度の最大値,\ $v_{\min}:$プレス速度の最小値,\ $X(t):$
 時刻$t$で得られる最新の位置情報$(=x(t-\tau))$に対し,
+\begin{equation}
+    \Delta\ell :=\delta v_{\min}\tau,\ \ell_0:=\ell-\Delta\ell,\ a:=\frac{\alpha}{\tau}
+\end{equation}
+とし,
 \begin{equation}\label{eq:linermodel}
     V(X)=v_{\min}+a(\ell_0-X)
 \end{equation}
-と$V(X)$を設定する.\\ただし$\Delta\ell :=\delta v_{\min}\tau,
-\ell_0:=\ell-\Delta\ell,a:=\frac{\alpha}{\tau}.$
+と$V(X)$を設定する.
 \subsubsection{微分方程式}
 \eqref{eq:linermodel}は次のように書き換えられる.
 \begin{equation}\label{eq:liner}\begin{cases}
@@ -179,23 +186,13 @@ $v_{\max}:$プレス速度の最大値,$v_{\min}:$プレス速度の最小値,$X
     y(s)=u_{\max}s+y_\ast &(0\le s \le 1)\label{eq:liner}
 \end{cases}\end{equation}
 \subsubsection{従来の手法との相違点}
+((4.5)が$\alpha,u_{\max}$にのみ依存している)
 \subsection{数値計算}
-\subsubsection{$\alpha$,$\beta$によるオーバーシュートの比較}
+\subsubsection{$\alpha$,$u_{\max}$比較}
 \section{終章}
 \subsection{結論}
 \subsection{残された課題}
 文献は\cite{Si}で表せます．
-
-\begin{equation}\label{eq1}
-x^{3}-5=y^{2}. 
-\end{equation}
-\begin{proof}
-式(\ref{eq1})には特に意味はありません．
-\end{proof}
-
-\subsection{見本２}
-
-\vspace{1cm}
 \begin{thebibliography}{9}
 \bibitem{Si} A. Simoni\u{c}, The Ahlfors lemma and Picard's theorems, 
 Rose-Hulman Undergrad. Math. J. {\bf 16} (2015), no. 2, 113--136. 
