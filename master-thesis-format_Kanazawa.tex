@@ -137,7 +137,13 @@ $t\in\mathbb{R},x(t):\mathbb{R}\rightarrow\mathbb{R}$と定数$\ell,\tau$,上で
 \end{cases}\end{equation}
 \subsection{数値計算}
 \subsubsection{離散化}
-(離散化)
+$2\le K\in\mathbb{N}$として,時間刻み幅を$\Delta t:=\frac{1}{K}$とおく.
+初期条件を$W_n=u_0n\Delta t (n=0,1,...,K)$として,$w_n(n=K+1,K+2,...)$
+を次で求める.
+\begin{equation}
+    \displaystyle\frac{w_{n+1}-w_n}{\Delta t}=u_0(1-w_{n-K})^\beta.
+\end{equation}
+
 \subsubsection{数値計算結果}
 （$\beta$を固定して$u_0$をパラメータとした結果）
 \section{線形コントロールによる分析}
@@ -181,9 +187,14 @@ $v_{\max}:$プレス速度の最大値,\ $v_{\min}:$プレス速度の最小値,
     u_{\max}:=\displaystyle\frac{v_{\max}}{v_{\min}}
 \end{equation}
 \eqref{eq:liner}は次のように書ける.
-\begin{equation}\begin{cases}
+\begin{equation}\label{eq:liner2}\begin{cases}
     \displaystyle\frac{dy}{ds}(s)=1+\alpha(d_0-y(s-1)) &(s>1),\\
-    y(s)=u_{\max}s+y_\ast &(0\le s \le 1)\label{eq:liner}
+    y(s)=u_{\max}s+y_\ast &(0\le s \le 1)
+\end{cases}\end{equation}
+さらに$z(s):=d_0-y(s)$とおくと,\eqref{eq:liner2}は次のように書ける.
+\begin{equation}\begin{cases}
+    \displaystyle\frac{dz}{ds}(s)=1-\alpha z(s-1) &(1\le s\le s_\ast),\\
+    z(s)=\displaystyle\frac{1}{\alpha}(u_{\max}-1)-u_{\max}s &(0\le s\le 1)\\
 \end{cases}\end{equation}
 \subsubsection{従来の手法との相違点}
 ((4.5)が$\alpha,u_{\max}$にのみ依存している)
