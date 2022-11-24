@@ -18,6 +18,8 @@
 \usepackage[dvips]{graphics}
 \usepackage{color,graphicx}
 \usepackage{pdfpages}
+
+
 \numberwithin{equation}{section}
 
 \def\tr#1{\mathord{\mathopen{{\vphantom{#1}}^t}#1}} 
@@ -110,7 +112,14 @@ Kanazawa University}
 現実にはその指定位置を超えてプレスしてしまう現象 (オーバーシュート) が起こる.
 オーバーシュートが生じる原因として，計測結果が歪取機に反映されるまでの遅れが挙げられる.
 時間遅れは東和精機に計測していただいたデータを用いる.
+\begin{figure}[hbt]
+    \centering
+    \includegraphics[scale=0.3,keepaspectratio]{/Users/shunsuke/Desktop/master-thesis/press_image.pdf}
+    \caption{理想の状態（左）と実際の状態（右）．}
+    \label{Sample p.1}
+\end{figure}
 
+\newpage
 
 \subsection{記号について}
 シャフトをプレス機で押し込みたい量を$\ell$,制御システムにおいて発生する時間遅れを$\tau$,プレス速度の最大値を
@@ -123,14 +132,26 @@ $v_{\max}$,最小速度を$v_{\min}$,時刻$t$において得られる最新の�
 
 
 \subsection{微分方程式について}
-指数$\beta$に対し,
+次のプレス制御を考える．
 \begin{equation}
-    G:=1-0.58\times\beta^{-0.79},\ \ell_1:=\frac{\tau v_{\max}}{G},\ v_0:=\min\left\{\displaystyle\frac{\ell G}{\tau},v_{\max}\right\}
+    V(X)=v_0\left(\frac{\ell-X}{\ell}\right)^\beta.
 \end{equation}
-とおく.次のようにプレス速度$V(X)$を設定する.
+\\ただし，$X(t)=0(0\le t\le\tau)$とする．
+\\
+この制御方法に対して，与えられた$\ell,\tau,\beta$に対して，オーバーシュートが生じず、プレス時間が最も短く済む
+ような，初速$v_0$を求める．
 \begin{equation}\label{eq:betamodel}
     V(X)=v_0\left(\displaystyle\frac{\min\{\ell_1,\ell-X\}}{\min\{\ell_1,\ell\}}\right)^\beta.
 \end{equation}
+$X$が十分に$\ell$に近づけば停止させる．
+
+
+
+% 指数$\beta$に対し,
+% \begin{equation}
+%     G:=1-0.58\times\beta^{-0.79},\ \ell_1:=\frac{\tau v_{\max}}{G},\ v_0:=\min\left\{\displaystyle\frac{\ell G}{\tau},v_{\max}\right\}
+% \end{equation}
+% とおく.次のようにプレス速度$V(X)$を設定する.
 
 
 \subsubsection{微分方程式}
@@ -209,11 +230,11 @@ $v_{\max}:$プレス速度の最大値,\ $v_{\min}:$プレス速度の最小値,
 \begin{equation}
     \Delta\ell :=\delta v_{\min}\tau,\ \ell_0:=\ell-\Delta\ell,\ a:=\frac{\alpha}{\tau}
 \end{equation}
-とし,
+とし,$V(X)$を次のように設定する.
 \begin{equation}\label{eq:linermodel}
     V(X)=v_{\min}+a(\ell_0-X)
 \end{equation}
-と$V(X)$を設定する.
+$X$が$\ell_0$に十分近づけば停止させる．
 
 
 \subsubsection{微分方程式}
@@ -237,14 +258,13 @@ $v_{\max}:$プレス速度の最大値,\ $v_{\min}:$プレス速度の最小値,
     y(s)=u_{\max}s+y_\ast &(0\le s \le 1).
 \end{cases}\end{equation}
 さらに$z(s):=d_0-y(s)$とおくと,\eqref{eq:liner2}は次のように書ける．
-\begin{equation}\begin{cases}
+\begin{equation}\label{z_press}\begin{cases}
     \displaystyle\frac{dz}{ds}(s)=1-\alpha z(s-1) &(1\le s\le s_\ast),\\
     z(s)=\displaystyle\frac{1}{\alpha}(u_{\max}-1)-u_{\max}s &(0\le s\le 1).
 \end{cases}\end{equation}
-
-
-\subsubsection{従来の手法との相違点}
-((4.5)が$\alpha,u_{\max}$にのみ依存している)
+$z(s)$が$0$に十分近づけば停止させる．
+\eqref{z_press}は$\alpha,\ u_{\max}$に依存しており，$u_{\max}$は機械によって決まっている．\\
+したがって，最適なプレス制御となるパラメータ$\alpha$を数値計算により決定する．
 
 
 \subsection{数値計算}
@@ -254,19 +274,36 @@ $v_{\max}:$プレス速度の最大値,\ $v_{\min}:$プレス速度の最小値,
 $2\le K\in\mathbb{N}$として，時間刻み幅を$\Delta t:=\frac{1}{K}$とおく.
 初期条件を$z_n=\frac{1}{\alpha} (u_{\max}-1)-u_{\max} n \Delta t$ ($n=0,1,...,K$)として，$w_n$ ($n=K+1,K+2,...$)
 を次で求める.
-\begin{equation}
+\begin{equation}\label{z_method}
     \displaystyle\frac{z_{n+1}-z_n}{\Delta t}=1-\alpha z_{n-K}
 \end{equation}
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[scale=0.7]{delta_031015.png}
+\includegraphics[scale=0.7]{/Users/shunsuke/Desktop/master-thesis/alpha11_25_2.png}
+\caption{\eqref{z_method}において$\alpha=0.3,0.7,1.2$で比較した図}
 \end{center}
 \end{figure}
+\begin{table}[h]
+    %\caption{\eqref{z_method}において$\alpha=0.3,0.7,1.2$で比較した値}
+    \label{table:colortbl}
+    \centering
+    \begin{tabular}{|r|r|r|}
+     \hline
+     $\alpha$ & オーバーシュート & 終了ステップ数  \\
+     \hline\hline
+     1.2 & 9.40 & 303 \\
+     0.7 & 5.62 & 406 \\
+     0.3 & 1.10 & 1173\\
+     \hline
+    \end{tabular}
+  \end{table}
+\\  
+表$1$のように$\alpha$の値が小さくなるにつれ，オーバーシュートが小さくなるがプレスにかかる時間が長くなってしまう．
 
 
 \subsubsection{$\alpha$,$u_{\max}$比較}
 
-
+\section{ばらつき}
 \section{終章}
 \subsection{結論}
 \subsection{残された課題}
