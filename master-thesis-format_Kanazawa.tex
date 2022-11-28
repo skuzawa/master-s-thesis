@@ -79,15 +79,11 @@ Kanazawa University}
 \tableofcontents
 \clearpage
 \section{はじめに}
-
 遅延微分方程式とは,現時点の時間導関数が解だけでなく，前の時間における導関数にも依存する可能性のあるような微分方程式である．
 制御システムにおいてフィードバックにかかる時間遅れも指摘されており，様々な数理モデルが数多く研究されている.
 身近な例としては，シャワーの温度調節が上げられる．熱いと感じて温度を下げるがぬるすぎて再び温度を上げるなどのような
-ことが挙げられる.
-
-\subsection{研究の目的と方法} 
-
-
+ことが挙げられる.\\
+また本研究は，東和精機株式会社と共同研究である．同社の制御システムに遅延微分方程式を応用した．
 \subsection{目的}
 本研究では遅延微分方程式で数理モデルを構築し,株式会社東和精機のプレス制御法の開発を行う.
 東和精機では,車のタイヤの連結部分であるシャフトをプレスすることによりその形状を成型している.
@@ -114,36 +110,33 @@ Kanazawa University}
 時間遅れは東和精機に計測していただいたデータを用いる.
 \begin{figure}[hbt]
     \centering
-    \includegraphics[scale=0.3,keepaspectratio]{/Users/shunsuke/Desktop/master-thesis/press_image.pdf}
+    \includegraphics[scale=0.5,keepaspectratio]{/Users/shunsuke/Desktop/master-thesis/press_image.pdf}
     \caption{理想の状態（左）と実際の状態（右）．}
     \label{Sample p.1}
 \end{figure}
-
 \newpage
-
-\subsection{記号について}
-シャフトをプレス機で押し込みたい量を$\ell$,制御システムにおいて発生する時間遅れを$\tau$,プレス速度の最大値を
-$v_{\max}$,最小速度を$v_{\min}$,時刻$t$において得られる最新の位置情報を$X(t)(=x(t-\tau))$とする.
 %%\includepdf[noautoscale=true, scale=0.9, pagecommand={}]{修論図_2.pdf}
 
 
 \section{$\beta$コントロールによる分析}
-($\beta$コントロール制御に至った過程)
-
-
-\subsection{微分方程式について}
+\subsection{制御モデルについて}
 次のプレス制御を考える．
-\begin{equation}
+ただし，シャフトをプレス機で押し込みたい量を$\ell$,制御システムにおいて発生する時間遅れを$\tau$,プレス速度の最大値を
+$v_{\max}$,最小速度を$v_{\min}$,時刻$t$において得られる最新の位置情報を$X(t)(=x(t-\tau))$とする.
+\begin{equation}\label{eq:betamodel}
     V(X)=v_0\left(\frac{\ell-X}{\ell}\right)^\beta.
 \end{equation}
-\\ただし，$X(t)=0(0\le t\le\tau)$とする．
+\\ただし，$X(t)=0\ \ (0\le t\le\tau)$とする．
 \\
+この制御方法は，プレス機の位置が目標のプレス量に近づくにつれて減速していく．それはプレス機が時間遅れのためすぐに停止できず
+オーバーシュートしてしまうため，プレス機の位置が目標のプレス量に十分近い時，低速である必要があるからである．\\
 この制御方法に対して，与えられた$\ell,\tau,\beta$に対して，オーバーシュートが生じず、プレス時間が最も短く済む
 ような，初速$v_0$を求める．
-\begin{equation}\label{eq:betamodel}
-    V(X)=v_0\left(\displaystyle\frac{\min\{\ell_1,\ell-X\}}{\min\{\ell_1,\ell\}}\right)^\beta.
-\end{equation}
-$X$が十分に$\ell$に近づけば停止させる．
+
+% \begin{equation}
+%     V(X)=v_0\left(\displaystyle\frac{\min\{\ell_1,\ell-X\}}{\min\{\ell_1,\ell\}}\right)^\beta.
+% \end{equation}
+% $X$が十分に$\ell$に近づけば停止させる．
 
 
 
@@ -154,8 +147,9 @@ $X$が十分に$\ell$に近づけば停止させる．
 % とおく.次のようにプレス速度$V(X)$を設定する.
 
 
-\subsubsection{微分方程式}
-$t\in\mathbb{R},x(t)\colon\mathbb{R}\rightarrow\mathbb{R}$と定数$\ell,\tau$,上で定めた$\beta,v_0$に対して\eqref{eq:betamodel}は次のように書き換えられる.
+\subsection{微分方程式}
+$t\in\mathbb{R},x(t)\colon\mathbb{R}\rightarrow\mathbb{R}$と定数$\ell,\tau$,
+上で定めた$\beta,v_0$に対して\eqref{eq:betamodel}は次のように書き換えられる.
 \begin{equation}\label{betafomula}\begin{cases}
     \displaystyle\frac{dx}{dt}(t)=v_0\left(\frac{\ell-x(t-\tau)}{\ell}\right)^\beta &(t>\tau),\\
     x(t)=v_0 t &(0\le t \le \tau).
@@ -203,16 +197,16 @@ $2\le K\in\mathbb{N}$として,時間刻み幅を$\Delta t:=\frac{1}{K}$とお�
     \item 押込量が小さいときはプレス機がシャフトに接触する前から制御を始める.
     \item 制御速度を押込量に依存させないようにする.
 \end{itemize}
-\eqref{betafomula}について$\beta=1$とすると,プレス速度が上がるが,オーバーシュートが大きくなってしまうという問題が発生してしまう.そのため考案したアイデアが
+\eqref{betafomula}について$\beta=1$とすると,プレス速度が上がり,オーバーシュートが大きくなってしまうという問題が発生してしまう.そのため考案したアイデアが
 目的のプレスしたい量の手前でプレス機を止める指令を出すことである.目的のプレスしたい量$\ell$に対して,少し手前で止める量$\ell_0$を
 以下のように定義する.
 \begin{equation}\label{delta_ell}
     \Delta\ell :=\delta v_{\min}\tau,\ \ell_0:=\ell-\Delta\ell
 \end{equation}
-ただし,$\delta$はパラメータ,$v_{\min}$は最小速度,$\tau$は時間遅れである.
-目標のプレスしたい量$\ell$から$\Delta\ell$手前で止めることで，結果として最小速度で時間遅れ分プレスされ，目標のプレスしたい量で止まる
+ただし，$\delta$はパラメータ，$v_{\min}$は最小速度，$\tau$は時間遅れである.
+目標のプレスしたい量$\ell$から$\Delta\ell$手前で止め，最小速度で時間遅れ分プレスされ，目標のプレスしたい量で止まる
 という考えである．\\
-また，$\beta$コントロールではプレス機をシャフトに衝突してから制御していた．線形コントロールでは，シャフトに衝突する前に制御を開始する．\\
+また，$\beta$コントロールではプレス機をシャフトに衝突してから制御していたが，線形コントロールでは，シャフトに衝突する前に制御を開始する．\\
 $\beta$コントロールでは制御開始点$x(0)=0$としていたが，線形コントロールでは，
 \begin{equation}\label{x_star}
     x_\ast:=\ell_0-\displaystyle\frac{v_{\max}-v_{\min}}{\alpha}\tau
@@ -222,8 +216,13 @@ $x_\ast$を設定することで，
 押込量が小さい場合，プレス機がシャフトに衝突する前に制御を始めることが可能になる．
 したがって線形コントロールでは\eqref{delta_ell}\eqref{x_star}で定義した$\Delta\ell , x_\ast$を用いて制御する．
 
-
-\subsection{微分方程式について}
+\begin{figure}[hbt]
+    \centering
+    \includegraphics[scale=0.5,keepaspectratio]{/Users/shunsuke/Desktop/master-thesis/press_exp.pdf}
+    \caption{$\beta$コントロール（左）と線形コントロール（右）．}
+    \label{Sample p.2}
+\end{figure}
+\subsection{制御モデルについて}
 $\ell:$目標のプレスする距離,\ $\tau:$時間遅れ,\ $\alpha,\delta:$パラメータ,\ 
 $v_{\max}:$プレス速度の最大値,\ $v_{\min}:$プレス速度の最小値,\ $X(t):$
 時刻$t$で得られる最新の位置情報$(=x(t-\tau))$に対し,
