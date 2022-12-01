@@ -81,60 +81,80 @@ Kanazawa University}
 
 \tableofcontents
 \clearpage
-\section{はじめに}
-遅延微分方程式とは,現時点の時間導関数が解だけでなく，前の時間における導関数にも依存する可能性のあるような微分方程式である．
-制御システムにおいてフィードバックにかかる時間遅れも指摘されており，様々な数理モデルが数多く研究されている.
-身近な例としては，シャワーの温度調節が上げられる．熱いと感じて温度を下げるがぬるすぎて再び温度を上げるなどのような
-ことが挙げられる.\\
-また本研究は，東和精機株式会社と共同研究である．同社の制御システムに遅延微分方程式を応用した．
-\subsection{目的}
-本研究では遅延微分方程式で数理モデルを構築し,株式会社東和精機のプレス制御法の開発を行う.
-東和精機では,車のタイヤの連結部分であるシャフトをプレスすることによりその形状を成型している.
-その際に,プレス機の制御システムにおいてフィードバックに時間がかかることで時間遅れが生じる.
-そして時間遅れが生じることで,目的のプレスしたい量と実際にプレスした量が一致しない問題があった.
-そこでこのプレス制御に対して時間遅れ微分方程式で数理モデルを構築することで,目的のプレスしたい量と実際にプレスした量が一致させる
-方法を開発するために本研究に至った.
-(プレス機のイメージ図)
+\section{序}
+遅延微分方程式とは，現時点の時間導関数が解だけでなく，前の時間における導関数にも依存する可能性のあるような微分方程式である．
+\begin{equation}
+\left\{\begin{array}{cc}
+    X^{\prime}(t)=F\left(t, X(t), X\left(t-\tau_1\right), \cdots, X\left(t-\tau_n\right), X^{\prime}\left(t-\sigma_1\right), \cdots, X\left(t-\sigma_m\right) ;\right. & t \geq t_0 \\
+    X(t)=\phi(t) ; & t \leq t_0
+    \end{array}\right.
+\end{equation}
+単純な初期条件では初期の履歴関数$\phi(t)$を指定する必要がある．数値$\tau_i \geq 0, i=1, \ldots, n$および
+$\sigma_i \geq 0, i=1, \ldots, k$は遅延，もしくは時間差と呼ばれる．
+遅延は定数，関数$\tau(t)$および$t$の$\sigma(t)$（時間依存性遅延），関数$\tau(t,X(t))$および$\sigma(t,X(t))$（状態依存性遅延）である場合がある．\\
+制御システムにおいてフィードバックにかかる時間遅れが指摘されており，様々な数理モデルが数多く研究されている．
+時間遅れは反応，再生そしてフィードバックにかかる遅れとして数理モデルに組み込まれることが多い．
+身近な例としては，シャワーの温度調節が挙げられる．熱いと感じて温度を下げるがぬるすぎて再び温度を上げる．
+適温になるまで，この操作を何回か繰り返した経験を持つ人も多いのではないだろうか．これは，シャワーの温度調節機構に時間遅れがあるが
+ゆえに起こることである．
 
+また本研究は，東和精機株式会社と共同研究を行った内容である．
+同社の制御システムにおける課題に遅延微分方程式を用いて数理モデルを構築し，新たな制御法の開発に取り組んだ．
 
-\subsection{本論文の構成}
-本論文は次のように構成される.第2節では東和精機の問題の具体的な概要、また本論文で扱う記号などについて述べる.
+本論文は次のように構成される.第2節では東和精機株式会社の問題の概要を説明する.
 第3節では$\beta$コントロールによるプレス制御モデルと
-そのモデルによる数値シミュレーションの結果を表す.
-第4節では線形コントロールによるプレス制御モデルとそのモデルによる数値シミュレーション
-結果を表す.第5節では第4節のモデルで得られた結果から見える今後の課題や展望などについて述べる.
+それによる数値シミュレーションの結果を表す.
+第4節では$\beta$コントロールによるプレス制御モデルを改良した線形コントロールによるプレス制御モデルとそれによる数値シミュレーション
+結果を表す．第5節では第4節のモデルで得られた結果から見える今後の課題や展望などについて述べる.
 
 
 \section{概要}
-金属棒の歪んでいる方向と反対側へ指定の位置までプレスすることに
+自動車の車輪の連結部に使用される金属棒をプレス機によって整形をする際，金属棒の歪んでいる方向と反対側へ指定の位置までプレスすることに
 よって，真っ直ぐの状態に塑性変形させ金属棒の歪みをとりたいのだが，
 現実にはその指定位置を超えてプレスしてしまう現象 (オーバーシュート) が起こる.
-オーバーシュートが生じる原因として，計測結果が歪取機に反映されるまでの遅れが挙げられる.
-時間遅れは東和精機に計測していただいたデータを用いる.
 \begin{figure}[hbt]
     \centering
-    \includegraphics[scale=0.5,keepaspectratio]{/Users/shunsuke/Desktop/master-thesis/press_image.pdf}
+    \includegraphics[scale=0.3,keepaspectratio]{/Users/shunsuke/Desktop/master-thesis/press_image.png}
     \caption{理想の状態（左）と実際の状態（右）．}
-    \label{Sample p.1}
+    \label{press_image}
 \end{figure}
 \newpage
 %%\includepdf[noautoscale=true, scale=0.9, pagecommand={}]{修論図_2.pdf}
 
+図\ref{press_image}はプレス機が金属棒をプレスするイメージ．本来は左図のように目標の押込量だけプレスしたい
+が，実際には右図のようにオーバーシュートしてしまう．
 
-\section{$\beta$コントロールによる分析}
+オーバーシュートが生じる原因として，計測結果が歪取機に反映されるまでの遅れが挙げられる.
+% \begin{figure}[hbt]
+%     \centering
+%     \includegraphics[scale=0.6,keepaspectratio]{/Users/shunsuke/Desktop/master-thesis/target_press.png}
+%     \includegraphics[scale=0.5,keepaspectratio]{/Users/shunsuke/Desktop/master-thesis/info_image.pdf}
+%     \caption{プレス機の位置イメージ}
+%     \label{target_press}
+% \end{figure}
+\begin{figure}[hbt]
+    \centering
+    \includegraphics[scale=0.4,keepaspectratio]{/Users/shunsuke/Desktop/master-thesis/information.png}
+    \caption{プレス機の情報伝達イメージ}
+    \label{info_image}
+\end{figure}
+
+\section{$\beta$コントロールモデル}
 \subsection{制御モデルについて}
-次のプレス制御を考える．
-ただし，シャフトをプレス機で押し込みたい量を$\ell$,制御システムにおいて発生する時間遅れを$\tau$,プレス速度の最大値を
-$v_{\max}$,最小速度を$v_{\min}$,時刻$t$において得られる最新の位置情報を$X(t)(=x(t-\tau))$とする.
+目標の押込量$\ell$,制御システムの時間遅れ$\tau$,プレス速度の最大値$v_{\max}$,
+最小値$v_{\min}$,指数$\beta$,時刻$t$において得られる最新の位置情報$X(t)(=x(t-\tau))$として次のプレス制御を考える：
 \begin{equation}\label{eq:betamodel}
     V(X)=v_0\left(\frac{\ell-X}{\ell}\right)^\beta.
 \end{equation}
-\\ただし，$X(t)=0\ \ (0\le t\le\tau)$とする．
-\\
-この制御方法は，プレス機の位置が目標のプレス量に近づくにつれて減速していく．それはプレス機が時間遅れのためすぐに停止できず
-オーバーシュートしてしまうため，プレス機の位置が目標のプレス量に十分近い時，低速である必要があるからである．\\
-この制御方法に対して，与えられた$\ell,\tau,\beta$に対して，オーバーシュートが生じず、プレス時間が最も短く済む
+ただし，初期値は$X(t)=0\ \ (0\le t\le\tau)$とする．
+
+この制御方法に対して，与えられた$\ell,\tau,\beta$に対して，オーバーシュートが生じず，プレス時間が最も短く済む
 ような，初速$v_0$を求める．
+
+% この制御方法では，プレス機の位置が目標のプレス量に近づくにつれて減速していく．プレス機がすぐに停止できず
+% オーバーシュートしてしまうため，プレス機の位置が目標のプレス量に十分近い時，低速である必要があるからである．
+
+
 
 % \begin{equation}
 %     V(X)=v_0\left(\displaystyle\frac{\min\{\ell_1,\ell-X\}}{\min\{\ell_1,\ell\}}\right)^\beta.
@@ -151,20 +171,20 @@ $v_{\max}$,最小速度を$v_{\min}$,時刻$t$において得られる最新の�
 
 
 \subsection{微分方程式}
-$t\in\mathbb{R},x(t)\colon\mathbb{R}\rightarrow\mathbb{R}$と定数$\ell,\tau$,
-上で定めた$\beta,v_0$に対して\eqref{eq:betamodel}は次のように書き換えられる.
+$t\in\mathbb{R},x(t)\colon\mathbb{R}\rightarrow\mathbb{R}$と定数$\ell,\tau,\beta,v_0\in\mathbb{R}$
+に対して\eqref{eq:betamodel}は次のように書き換えられる．
 \begin{equation}\label{betafomula}\begin{cases}
     \displaystyle\frac{dx}{dt}(t)=v_0\left(\frac{\ell-x(t-\tau)}{\ell}\right)^\beta &(t>\tau),\\
     x(t)=v_0 t &(0\le t \le \tau).
 \end{cases}\end{equation}
 
 
-\subsubsection{無次元化}
-次のような記号を用いると
+\subsubsection{正規化}
+$s,w(s),u_0\in\mathbb{R}$を
 \begin{equation}
     s:=\frac{t}{\tau},\ w(s):=\frac{x(\tau s)}{\ell},\ u_0:=\frac{\tau v_0}{\ell},
 \end{equation}
-\eqref{betafomula}は次のように書ける.
+と定めると，\eqref{betafomula}は次のように書ける.
 \begin{equation}\label{betafomula2}\begin{cases}
     \displaystyle\frac{dw}{ds}(s)=u_0(1-w(s-1))^\beta &(s>1),\\
     w(s)=u_0 s &(0\le s \le 1).
@@ -173,8 +193,9 @@ $t\in\mathbb{R},x(t)\colon\mathbb{R}\rightarrow\mathbb{R}$と定数$\ell,\tau$,
 
 \subsection{数値計算}
 \subsubsection{離散化}
-$2\le K\in\mathbb{N}$として,時間刻み幅を$\Delta t:=\frac{1}{K}$とおく.
-初期条件を$W_n=u_0n\Delta t (n=0,1,...,K)$として,$w_n $ ($n=K+1,K+2,...$)
+$2\le K\in\mathbb{N}$として,時間刻み幅を$\Delta t:=1/K$とおく．
+
+初期条件を$W_n=u_0n\Delta t (n=0,1,...,K)$として，$w_n $ ($n=K+1,K+2,...$)
 を次で求める.
 \begin{equation}
     \displaystyle\frac{w_{n+1}-w_n}{\Delta t}=u_0(1-w_{n-K})^\beta.
@@ -182,7 +203,7 @@ $2\le K\in\mathbb{N}$として,時間刻み幅を$\Delta t:=\frac{1}{K}$とお�
 \subsubsection{アルゴリズム}
 \begin{figure}[h]
     \begin{algorithm}[H]
-        \caption{Calculate $\beta$コントロール}
+        \caption{$\beta$コントロール}
         \label{alg1}
         \begin{algorithmic}[1]    
         \REQUIRE $2\le K \textless N\in\mathbb{N}$
@@ -193,7 +214,12 @@ $2\le K\in\mathbb{N}$として,時間刻み幅を$\Delta t:=\frac{1}{K}$とお�
         \ELSE
         \STATE $y \leftarrow X[n-K]$
         \ENDIF
-        \STATE $X[n+1]\leftarrow X[n]+\left(\displaystyle\frac{\min(|L-y|,L1)}{L_{\min}}\right)\times v\times dt$
+        \IF{$y>L0$（オーバーシュートしている．）}
+        \STATE $v \leftarrow 0$
+        \ELSE
+        \STATE $v \leftarrow \left(\displaystyle\frac{\min(|L-y|,L_1)}{L_{\min}}\right)^\beta$
+        \ENDIF
+        \STATE $X[n+1]\leftarrow X[n]+v\times dt$
         \ENDFOR
         \end{algorithmic}
     \end{algorithm}
@@ -203,27 +229,30 @@ $2\le K\in\mathbb{N}$として,時間刻み幅を$\Delta t:=\frac{1}{K}$とお�
 \section{線形コントロールによる分析}
 従来の$\beta$コントロールでは以下のような課題があった．
 \begin{itemize}
-    \item プレス機をシャフトに衝突してから制御し始めていたため,押込量が小さいときオーバーシュートが大きくなる.
-    \item 初速を$v_0(<v_{\max})$にすると,時間がかかる.
-    \item 停止直前の速度が小さすぎる.
-    \item 制御速度が押込量に依存しているため,オーバーシュートが安定しない.
+    \item プレス機をシャフトに衝突してから制御し始めていたため,押込量が小さいときオーバーシュートが大きくなる．
+    \item 初速を$v_0(<v_{\max})$にすると,時間がかかる．
+    \item 停止直前の速度が小さすぎる．
+    \item 制御速度が押込量に依存しているため,オーバーシュートが安定しない．
 \end{itemize}
-このような課題を受け,以下のような改善点を基に線形モデルを構築した.
+
+このような課題を受け,以下のような改善点を基に線形モデルを構築した．
+
 \begin{itemize}
     \item \eqref{betafomula}について$\beta=1$として線形コントロールすることでプレス機の速度を上げる. 
     \item 初速は常に$v_{\max}$とする.
     \item 押込量が小さいときはプレス機がシャフトに接触する前から制御を始める.
     \item 制御速度を押込量に依存させないようにする.
 \end{itemize}
-\eqref{betafomula}について$\beta=1$とすると,プレス速度が上がり,オーバーシュートが大きくなってしまうという問題が発生してしまう.そのため考案したアイデアが
-目的のプレスしたい量の手前でプレス機を止める指令を出すことである.目的のプレスしたい量$\ell$に対して,少し手前で止める量$\ell_0$を
+\eqref{betafomula}について$\beta=1$とすると,プレス速度が上がり,オーバーシュートが大きくなってしまうという問題が発生してしまう.
+そのため目標の押込量の手前でプレス機を止める指令を出すことで，プレス速度を落とすことなく目標の押込量に近づけることを目指した.
+目標の押込量$\ell$に対して,目標の押込量より少し短い$\ell_0$を
 以下のように定義する.
 \begin{equation}\label{delta_ell}
     \Delta\ell :=\delta v_{\min}\tau,\ \ell_0:=\ell-\Delta\ell
 \end{equation}
 ただし，$\delta$はパラメータ，$v_{\min}$は最小速度，$\tau$は時間遅れである.
-目標のプレスしたい量$\ell$から$\Delta\ell$手前で止め，最小速度で時間遅れ分プレスされ，目標のプレスしたい量で止まる
-という考えである．\\
+目標の押込量$\ell$から$\Delta\ell$手前で止め，最小速度で時間遅れ分プレスされ，ちょうど目標の押込量で止まると考えた．
+
 また，$\beta$コントロールではプレス機をシャフトに衝突してから制御していたが，線形コントロールでは，シャフトに衝突する前に制御を開始する．\\
 $\beta$コントロールでは制御開始点$x(0)=0$としていたが，線形コントロールでは，
 \begin{equation}\label{x_star}
@@ -232,25 +261,28 @@ $\beta$コントロールでは制御開始点$x(0)=0$としていたが，線�
 と定義し，制御開始点を$x(0)=x_\ast$と設定する．\\
 $x_\ast$を設定することで，
 押込量が小さい場合，プレス機がシャフトに衝突する前に制御を始めることが可能になる．
-したがって線形コントロールでは\eqref{delta_ell}\eqref{x_star}で定義した$\Delta\ell , x_\ast$を用いて制御する．
+したがって線形コントロールでは\eqref{delta_ell}，\eqref{x_star}で定義した$\Delta\ell , x_\ast$を用いて制御する．
 
 \begin{figure}[hbt]
     \centering
-    \includegraphics[scale=0.5,keepaspectratio]{/Users/shunsuke/Desktop/master-thesis/press_exp.pdf}
+    \includegraphics[scale=0.4,keepaspectratio]{/Users/shunsuke/Desktop/master-thesis/press_exp.pdf}
     \caption{$\beta$コントロール（左）と線形コントロール（右）．}
     \label{Sample p.2}
 \end{figure}
+\newpage
+
 \subsection{制御モデルについて}
-$\ell:$目標のプレスする距離,\ $\tau:$時間遅れ,\ $\alpha,\delta:$パラメータ,\ 
-$v_{\max}:$プレス速度の最大値,\ $v_{\min}:$プレス速度の最小値,\ $X(t):$
-時刻$t$で得られる最新の位置情報$(=x(t-\tau))$に対し,
+目標の押込量$\ell:$,制御システムの時間遅れ$\tau:$,パラメータ$\alpha,\delta:$,
+プレス速度の最大値$v_{\max}:$,プレス速度の最小値$v_{\min}$,時刻$t$で得られる最新の位置情報$X(t):$
+$(=x(t-\tau))$に対し，
 \begin{equation}
     \Delta\ell :=\delta v_{\min}\tau,\ \ell_0:=\ell-\Delta\ell,\ a:=\frac{\alpha}{\tau}
 \end{equation}
-とし,$V(X)$を次のように設定する.
+とし，$V(X)$を次のように設定する：
 \begin{equation}\label{eq:linermodel}
     V(X)=v_{\min}+a(\ell_0-X)
 \end{equation}
+
 $X$が$\ell_0$に十分近づけば停止させる．
 
 
@@ -260,25 +292,27 @@ $X$が$\ell_0$に十分近づけば停止させる．
     \displaystyle\frac{dx}{dt}(t)=v_{\min}+a(\ell_0-x(t-\tau)) &(t>\tau),\\
     x(t)=v_{\max}t+x_\ast &(0\le t \le \tau)
 \end{cases}\end{equation}
+
 ただし，$x_\ast$は\eqref{x_star}で定義した位置．
 
 \subsubsection{正規化}
-次のような記号を用いると
+次のような記号を定める．
 \begin{equation}
     s:=\displaystyle\frac{t}{\tau},\ y(s):=\displaystyle\frac{x(\tau s)}{v_{min}\tau},\
     d_0:=\frac{\ell_0}{v_{\min}\tau},\ u_{\max}:=\displaystyle\frac{v_{\max}}{v_{\min}},\ 
     y_\ast:=d_0-\displaystyle\frac{(u_{\max}-1)}{\alpha}
 \end{equation}
-\eqref{eq:liner}は次のように書ける.
+このとき，\eqref{eq:liner}は次のように書ける.
 \begin{equation}\label{eq:liner2}\begin{cases}
     \displaystyle\frac{dy}{ds}(s)=1+\alpha(d_0-y(s-1)) &(s>1),\\
     y(s)=u_{\max}s+y_\ast &(0\le s \le 1).
 \end{cases}\end{equation}
-さらに$z(s):=d_0-y(s)$とおくと,\eqref{eq:liner2}は次のように書ける．
+さらに$z(s):=d_0-y(s)$とおくと，\eqref{eq:liner2}は次のように書ける．
 \begin{equation}\label{z_press}\begin{cases}
-    \displaystyle\frac{dz}{ds}(s)=1-\alpha z(s-1) &(1\le s\le s_\ast),\\
+    \displaystyle\frac{dz}{ds}(s)=1-\alpha z(s-1) &(s>1),\\
     z(s)=\displaystyle\frac{1}{\alpha}(u_{\max}-1)-u_{\max}s &(0\le s\le 1).
 \end{cases}\end{equation}
+
 $z(s)$が$0$に十分近づけば停止させる．
 \eqref{z_press}は$\alpha,\ u_{\max}$に依存しており，$u_{\max}$は機械によって決まっている．\\
 したがって，最適なプレス制御となるパラメータ$\alpha$を数値計算により決定する．
@@ -288,8 +322,8 @@ $z(s)$が$0$に十分近づけば停止させる．
 
 
 \subsubsection{離散化}
-$2\le K\in\mathbb{N}$として，時間刻み幅を$\Delta t:=\frac{1}{K}$とおく.
-初期条件を$z_n=\frac{1}{\alpha} (u_{\max}-1)-u_{\max} n \Delta t$ ($n=0,1,...,K$)として，$w_n$ ($n=K+1,K+2,...$)
+$2\le K\in\mathbb{N}$として，時間刻み幅を$\Delta t:=1/K$とおく.
+初期条件を$z_n=(u_{\max}-1)/\alpha-u_{\max} n \Delta t$ ($n=0,1,...,K$)として，$w_n$ ($n=K+1,K+2,...$)
 を次で求める.
 \begin{equation}\label{z_method}
     \displaystyle\frac{z_{n+1}-z_n}{\Delta t}=1-\alpha z_{n-K}
@@ -297,18 +331,23 @@ $2\le K\in\mathbb{N}$として，時間刻み幅を$\Delta t:=\frac{1}{K}$とお
 \subsubsection{アルゴリズム}
 \begin{figure}[h]
     \begin{algorithm}[H]
-        \caption{Calculate $\beta$コントロール}
+        \caption{線形コントロール}
         \label{alg1}
         \begin{algorithmic}[1]    
         \REQUIRE $2\le K \textless N\in\mathbb{N}$
         \ENSURE $y = x^n$
-        \FOR{$n \le N$}
+        \FOR{$n=1,\ldots,N$}
         \IF{$n \le K$}
-        \STATE $y \leftarrow 0$
+        \STATE 位置の初期条件$y \leftarrow x_\ast$
         \ELSE
-        \STATE $y \leftarrow X[n-K]$
+        \STATE $K$ステップ前の位置情報を取得する．$y \leftarrow X[n-K]$
         \ENDIF
-        \STATE $X[n+1]\leftarrow X[n]+\left(\displaystyle\frac{\min(|L-y|,L1)}{L_{\min}}\right)\times v\times dt$
+        \IF{$y>L0$（オーバーシュートしている．）}
+        \STATE $v \leftarrow 0$
+        \ELSE
+        \STATE $v \leftarrow v_{\min}+a\times(L_0-x)$
+        \ENDIF
+        \STATE $X[n+1]\leftarrow X[n]+v\times dt$
         \ENDFOR
         \end{algorithmic}
     \end{algorithm}
@@ -363,7 +402,6 @@ $2\le K\in\mathbb{N}$として，時間刻み幅を$\Delta t:=\frac{1}{K}$とお
 \end{table}
 \eqref{table:colortbl2}のように$\beta$の値が小さくなるにつれ，オーバーシュートは小さくなる．またかかった時間やプレスの速度は$\beta$に
 依らないので変化しない．
-\section{ばらつき}
 \section{終章}
 \subsection{結論}
 \subsection{残された課題}
