@@ -180,7 +180,7 @@ $t\in\mathbb{R},x(t)\colon\mathbb{R}\rightarrow\mathbb{R}$と定数$\ell,\tau,\b
 
 
 \subsubsection{正規化}
-$s,w(s),u_0\in\mathbb{R}$を
+$s,w(s),u_0$を
 \begin{equation}
     s:=\frac{t}{\tau},\ w(s):=\frac{x(\tau s)}{\ell},\ u_0:=\frac{\tau v_0}{\ell},
 \end{equation}
@@ -195,7 +195,7 @@ $s,w(s),u_0\in\mathbb{R}$を
 \subsubsection{離散化}
 $2\le K\in\mathbb{N}$として,時間刻み幅を$\Delta t:=1/K$とおく．
 
-初期条件を$W_n=u_0n\Delta t (n=0,1,...,K)$として，$w_n $ ($n=K+1,K+2,...$)
+初期条件を$W_n=u_0n\Delta t$ ($n=0,1,...,K)$として，$w_n $ ($n=K+1,K+2,...$)
 を次で求める.
 \begin{equation}
     \displaystyle\frac{w_{n+1}-w_n}{\Delta t}=u_0(1-w_{n-K})^\beta.
@@ -207,19 +207,19 @@ $2\le K\in\mathbb{N}$として,時間刻み幅を$\Delta t:=1/K$とおく．
         \label{alg1}
         \begin{algorithmic}[1]    
         \REQUIRE $2\le K \textless N\in\mathbb{N}$
-        \ENSURE $y = x^n$
-        \FOR{$n \le N$}
+        \ENSURE $w[N]$
+        \FOR{$n=1,\ldots,N$}
         \IF{$n \le K$}
         \STATE $y \leftarrow 0$
         \ELSE
-        \STATE $y \leftarrow X[n-K]$
+        \STATE $y \leftarrow w[n-K]$
         \ENDIF
-        \IF{$y>L0$（オーバーシュートしている．）}
-        \STATE $v \leftarrow 0$
+        \IF{$y>L$（オーバーシュートしているか．）}
+        \STATE $u \leftarrow 0$
         \ELSE
-        \STATE $v \leftarrow \left(\displaystyle\frac{\min(|L-y|,L_1)}{L_{\min}}\right)^\beta$
+        \STATE $u \leftarrow u_0(1-y)^\beta$
         \ENDIF
-        \STATE $X[n+1]\leftarrow X[n]+v\times dt$
+        \STATE $w[n+1]\leftarrow w[n]+u\times ds$
         \ENDFOR
         \end{algorithmic}
     \end{algorithm}
@@ -312,18 +312,15 @@ $X$が$\ell_0$に十分近づけば停止させる．
     \displaystyle\frac{dz}{ds}(s)=1-\alpha z(s-1) &(s>1),\\
     z(s)=\displaystyle\frac{1}{\alpha}(u_{\max}-1)-u_{\max}s &(0\le s\le 1).
 \end{cases}\end{equation}
-
 $z(s)$が$0$に十分近づけば停止させる．
-\eqref{z_press}は$\alpha,\ u_{\max}$に依存しており，$u_{\max}$は機械によって決まっている．\\
-したがって，最適なプレス制御となるパラメータ$\alpha$を数値計算により決定する．
+% \eqref{z_press}は$\alpha,\ u_{\max}$に依存しており，$u_{\max}$は機械によって決まっている．\\
+% したがって，最適なプレス制御となるパラメータ$\alpha$を数値計算により決定する．
 
 
 \subsection{数値計算}
-
-
 \subsubsection{離散化}
 $2\le K\in\mathbb{N}$として，時間刻み幅を$\Delta t:=1/K$とおく.
-初期条件を$z_n=(u_{\max}-1)/\alpha-u_{\max} n \Delta t$ ($n=0,1,...,K$)として，$w_n$ ($n=K+1,K+2,...$)
+初期条件を$z_n=(u_{\max}-1)/\alpha-u_{\max} n \Delta t$ ($n=0,1,...,K$)として，$z_n$ ($n=K+1,K+2,...$)
 を次で求める.
 \begin{equation}\label{z_method}
     \displaystyle\frac{z_{n+1}-z_n}{\Delta t}=1-\alpha z_{n-K}
@@ -335,19 +332,19 @@ $2\le K\in\mathbb{N}$として，時間刻み幅を$\Delta t:=1/K$とおく.
         \label{alg1}
         \begin{algorithmic}[1]    
         \REQUIRE $2\le K \textless N\in\mathbb{N}$
-        \ENSURE $y = x^n$
+        \ENSURE $z[N]$
         \FOR{$n=1,\ldots,N$}
         \IF{$n \le K$}
-        \STATE 位置の初期条件$y \leftarrow x_\ast$
+        \STATE $y \leftarrow x_\ast$（位置の初期値．）
         \ELSE
-        \STATE $K$ステップ前の位置情報を取得する．$y \leftarrow X[n-K]$
+        \STATE $y \leftarrow w[n-K]$（$K$ステップ前の位置．）
         \ENDIF
-        \IF{$y>L0$（オーバーシュートしている．）}
-        \STATE $v \leftarrow 0$
+        \IF{$y>L0$（オーバーシュートしているか．）}
+        \STATE $u \leftarrow 0$
         \ELSE
-        \STATE $v \leftarrow v_{\min}+a\times(L_0-x)$
+        \STATE $u \leftarrow 1-\alpha \times y$
         \ENDIF
-        \STATE $X[n+1]\leftarrow X[n]+v\times dt$
+        \STATE $z[n+1]\leftarrow z[n]+u\times ds$
         \ENDFOR
         \end{algorithmic}
     \end{algorithm}
@@ -356,8 +353,9 @@ $2\le K\in\mathbb{N}$として，時間刻み幅を$\Delta t:=1/K$とおく.
 \subsubsection{数値計算結果}
 \begin{figure}[h]
 \begin{center}
-\includegraphics[scale=0.7]{/Users/shunsuke/Desktop/master-thesis/alpha11_25_2.png}
-\caption{\eqref{z_method}において$\alpha=0.3,0.7,1.2$で比較した図}
+\includegraphics[scale=0.7]{/Users/shunsuke/Desktop/master-thesis/alpha_12_8.png}
+%\caption{\eqref{z_method}}
+\caption{}
 \end{center}
 \end{figure}
 
@@ -368,21 +366,24 @@ $2\le K\in\mathbb{N}$として，時間刻み幅を$\Delta t:=1/K$とおく.
     \begin{tabular}{|r|r|r|}
      \hline
      $\alpha$ & オーバーシュート$[\mu m]$ & かかった時間$[ms]$  \\
-     \hline\hline
-     1.2 & 9.40 & 151 \\
-     0.7 & 5.62 & 203 \\
-     0.3 & 1.10 & 566\\
+     \hline
+     0.2 & -4.79 & 1972 \\
+     0.4 & -1.22 & 758 \\
+     0.6 & 1.51 & 460 \\
+     0.8 & 3.89 & 371 \\
+     1.0 & 5.50 & 329 \\
      \hline
     \end{tabular}
 \end{table}
   
-\eqref{table:colortbl}のように$\alpha$の値が小さくなるにつれ，オーバーシュートが小さくなるがプレスにかかる時間が長くなってしまう．
-
+上図のように$\alpha$の値が小さくなるにつれ，オーバーシュートが小さくなるがプレスにかかる時間が長くなってしまう．
+\newpage
 
 \begin{figure}[h]
     \begin{center}
-    \includegraphics[scale=0.7]{/Users/shunsuke/Desktop/master-thesis/1129_delta.png}
-    \caption{\eqref{z_method}において$\delta=0.3,1.5,3.0$で比較した図}
+    \includegraphics[scale=0.7]{/Users/shunsuke/Desktop/master-thesis/delta_12_8.png}
+    %\caption{\eqref{z_method}において$\delta=0.3,1.5,3.0$で比較した図}
+    \caption{}
     \end{center}
 \end{figure}
 
@@ -393,14 +394,16 @@ $2\le K\in\mathbb{N}$として，時間刻み幅を$\Delta t:=1/K$とおく.
     \begin{tabular}{|r|r|r|}
      \hline
      $\beta$ & オーバーシュート$[\mu m]$ & かかった時間$[ms]$  \\
-     \hline\hline
-     1.2 & 9.40 & 277 \\
-     0.7 & 5.62 & 277 \\
-     0.3 & 1.10 & 277 \\
+     \hline
+     0.3 & 4.21 & 460 \\
+     1.5 & 3.01 & 460 \\
+     3.0 & 1.51 & 460 \\
+     10.0 & -5.48 & 460 \\
+     30.0 & -15.48 & 460 \\
      \hline
     \end{tabular}
 \end{table}
-\eqref{table:colortbl2}のように$\beta$の値が小さくなるにつれ，オーバーシュートは小さくなる．またかかった時間やプレスの速度は$\beta$に
+上図のように$\beta$の値が小さくなるにつれ，オーバーシュートは小さくなる．またかかった時間やプレスの速度は$\beta$に
 依らないので変化しない．
 \section{終章}
 \subsection{結論}
